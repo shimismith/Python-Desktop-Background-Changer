@@ -2,7 +2,7 @@ import urllib.request
 from datetime import datetime, timedelta
 import os
 
-def get_file(num):
+def get_file(num, directory_path):
     date = datetime.now() - timedelta(days=num)
 
 
@@ -23,7 +23,7 @@ def get_file(num):
 
     image_data = urllib.request.urlopen(image_url)
 
-    image_path = "/Users/shimismith/Desktop/" + image_name
+    image_path = directory_path + image_name
     with open(image_path, 'wb') as output:
         output.write(image_data.read())
 
@@ -55,4 +55,4 @@ def change_background_mac(path):
 
 
 if __name__ == '__main__':
-    get_file(1)
+    #get_file(1, PATH)
