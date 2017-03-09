@@ -3,6 +3,8 @@ from datetime import datetime, timedelta
 import os
 import platform
 
+PATH = "" #Change this to whatever path you want it to be
+
 def get_file(num, directory_path):
     date = datetime.now() - timedelta(days=num)
 
@@ -56,6 +58,8 @@ def change_background_mac(path):
 
 
 if __name__ == '__main__':
+    if PATH == "":
+        input("Please enter a directory to store the images in ")
     if platform.system() == 'Darwin':
         change_background_mac(get_file(1, PATH))
     elif platform.system() == 'Linux':
