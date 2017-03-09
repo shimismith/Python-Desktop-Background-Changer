@@ -1,6 +1,7 @@
 import urllib.request
 from datetime import datetime, timedelta
 import os
+import platform
 
 def get_file(num):
     date = datetime.now() - timedelta(days=num)
@@ -23,12 +24,7 @@ def get_file(num):
 
     image_data = urllib.request.urlopen(image_url)
 
-    image_path = os.path.join(os.path.expanduser('~/Desktop/') + image_name)
-
-    with open(image_path, 'wb') as output:
-        output.write(image_data.read())
-
-    change_background_mac(image_path)
+    return image_name, image_data
 
 def _fix_date(date):
     """adds 0 infront of single digit numbers"""
@@ -50,10 +46,28 @@ def _get_image_name(data, i):
     return str(data[i:end_num])[2:-1]  #[2:-1] removes an unecessary 'b' and quotations
 
 
-def change_background_mac(path):
-    cmd =  """osascript -e 'tell application "Finder" to set desktop picture to POSIX file""" + '"' + path + """"'"""
-    os.system(cmd)
+def download_file(image_path, image_data):
+    with open(image_path, 'wb') as output:
+        output.write(image_data.read())
+
+def change_background():
+    image_name, image_data = get_file(0)
+
+    if platform.system() == 'Darwin':
+        image_path = os.path.join(os.path.expanduser('~/Desktop/') + image_name)
+        download_file(image_path, image_data)
+
+        #changes the background
+        cmd = """osascript -e 'tell application "Finder" to set desktop picture to POSIX file""" + '"' + image_path + """"'"""
+        os.system(cmd)
+    elif platform.system() == 'Linux':
+        pass
+    elif platform.system() == 'win32':
+        pass
+    else:
+        print("OS not supported!")
 
 
 if __name__ == '__main__':
-    get_file(0)
+    change_background()
+
