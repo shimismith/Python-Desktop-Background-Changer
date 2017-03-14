@@ -61,7 +61,7 @@ if __name__ == '__main__':
     if PATH == "":
         input("Please enter a directory to store the images in ")
     if platform.system() == 'Darwin':
-        change_background_mac(get_file(1, PATH))
+        change_background_mac(get_file(0, PATH))
     elif platform.system() == 'Linux':
         pass
     elif platform.system() == 'win32':
