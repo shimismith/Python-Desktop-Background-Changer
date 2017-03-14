@@ -55,4 +55,4 @@ def change_background_mac(path):
 
 
 if __name__ == '__main__':
-    get_file(1)
+    get_file(0)
