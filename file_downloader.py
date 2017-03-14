@@ -25,8 +25,7 @@ def get_file(num, directory_path):
     image_name = image.split('/')[-1]  # name of the image
 
     image_data = urllib.request.urlopen(image_url)
-
-    image_path = directory_path + image_name
+    image_path = os.path.join(directory_path + image_name)
     with open(image_path, 'wb') as output:
         output.write(image_data.read())
 
@@ -58,8 +57,8 @@ def change_background_mac(path):
 
 
 if __name__ == '__main__':
-    if PATH == "":
-        input("Please enter a directory to store the images in ")
+    if PATH == "" and (platform.system() == 'Linux' or platform.system() == 'Darwin'):
+        PATH = os.path.expanduser('~/Desktop/')
     if platform.system() == 'Darwin':
         change_background_mac(get_file(0, PATH))
     elif platform.system() == 'Linux':
