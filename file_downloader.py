@@ -23,7 +23,8 @@ def get_file(num):
 
     image_data = urllib.request.urlopen(image_url)
 
-    image_path = "/Users/shimismith/Desktop/" + image_name
+    image_path = os.path.join(os.path.expanduser('~/Desktop/') + image_name)
+
     with open(image_path, 'wb') as output:
         output.write(image_data.read())
 
