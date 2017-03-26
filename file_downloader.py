@@ -1,8 +1,11 @@
 import urllib.request
 from datetime import datetime, timedelta
 import os
+import platform
 
-def get_file(num):
+PATH = "" #Change this to whatever path you want it to be
+
+def get_file(num, directory_path):
     date = datetime.now() - timedelta(days=num)
 
 
@@ -22,13 +25,11 @@ def get_file(num):
     image_name = image.split('/')[-1]  # name of the image
 
     image_data = urllib.request.urlopen(image_url)
-
-    image_path = os.path.join(os.path.expanduser('~/Desktop/') + image_name)
-
+    image_path = os.path.join(directory_path + image_name)
     with open(image_path, 'wb') as output:
         output.write(image_data.read())
 
-    change_background_mac(image_path)
+    return image_path
 
 def _fix_date(date):
     """adds 0 infront of single digit numbers"""
@@ -56,4 +57,13 @@ def change_background_mac(path):
 
 
 if __name__ == '__main__':
-    get_file(0)
+    if PATH == "" and (platform.system() == 'Linux' or platform.system() == 'Darwin'):
+        PATH = os.path.expanduser('~/Desktop/')
+    if platform.system() == 'Darwin':
+        change_background_mac(get_file(0))
+    elif platform.system() == 'Linux':
+        pass
+    elif platform.system() == 'win32':
+        pass
+    else:
+        print("OS may not supported!")
