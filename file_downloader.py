@@ -60,7 +60,7 @@ if __name__ == '__main__':
     if PATH == "" and (platform.system() == 'Linux' or platform.system() == 'Darwin'):
         PATH = os.path.expanduser('~/Desktop/')
     if platform.system() == 'Darwin':
-        change_background_mac(get_file(0, PATH))
+        change_background_mac(get_file(0))
     elif platform.system() == 'Linux':
         pass
     elif platform.system() == 'win32':
