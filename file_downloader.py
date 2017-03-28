@@ -2,10 +2,10 @@ import urllib.request
 from datetime import datetime, timedelta
 import os
 import platform
+import shutil
 
 def get_file(num):
     date = datetime.now() - timedelta(days=num)
-
 
     url = 'https://apod.nasa.gov/apod/ap' + str(date.year)[2:] + _fix_date(date.month) + _fix_date(date.day) + '.html'
 
@@ -25,6 +25,7 @@ def get_file(num):
     image_data = urllib.request.urlopen(image_url)
 
     return image_name, image_data
+
 
 def _fix_date(date):
     """adds 0 infront of single digit numbers"""
@@ -50,6 +51,7 @@ def download_file(image_path, image_data):
     with open(image_path, 'wb') as output:
         output.write(image_data.read())
 
+
 def change_background():
     image_name, image_data = get_file(0)
 
@@ -61,9 +63,40 @@ def change_background():
         cmd = """osascript -e 'tell application "Finder" to set desktop picture to POSIX file""" + '"' + image_path + """"'"""
         os.system(cmd)
     elif platform.system() == 'Linux':
-        pass
-    elif platform.system() == 'win32':
-        pass
+        print("Sorry we don't do those (for now)")
+    elif platform.system() == 'Windows':
+
+        #===================getting the paths to dirs we needed==========================#
+        image_path = os.path.join(os.path.expanduser('~\AppData\Roaming\Microsoft\Windows\Themes\ ')).strip()
+        cachedFiles_path = image_path + 'CachedFiles\ '.strip()
+        #============================================================================#
+        download_file(image_path + image_name, image_data)
+
+        if image_name[-3:] is not 'jpg':
+            os.rename(image_path + image_name, image_path + image_name[:-3] + 'jpg')
+            image_name = image_name[:-3] + 'jpg'
+
+        abs_image_path = image_path + image_name
+
+        cached_file = [f for f in os.listdir(cachedFiles_path) if f.endswith(".jpg")]
+        for f in cached_file:
+            os.remove(cachedFiles_path + f)
+
+        shutil.copy2(abs_image_path, cachedFiles_path)
+        cachedimage_path = cachedFiles_path + image_name
+
+        try:
+            os.remove(image_path + 'TranscodedWallpaper')
+        except FileNotFoundError:
+            pass
+        os.rename(image_path + image_name, image_path + 'TranscodedWallpaper')
+
+        reg_background = """reg add "HKEY_CURRENT_USER\Control Panel\Desktop" /v Wallpaper /t REG_SZ  /f /d """ \
+                         + cachedimage_path
+
+        os.system(reg_background)
+        os.system('RUNDLL32.EXE USER32.DLL,UpdatePerUserSystemParameters SPI_SETDESKWALLPAPER, True' +
+                  cachedimage_path + ' SPIF_UPDATEINIFILE')
     else:
         print("OS not supported!")
 
