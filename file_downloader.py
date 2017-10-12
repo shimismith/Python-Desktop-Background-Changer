@@ -53,15 +53,29 @@ def download_file(image_path, image_data):
 
 
 def change_background():
-    image_name, image_data = get_file(0)
+    get_file_error = False
+    image_name, image_data = "", ""
+    try:
+        image_name, image_data = get_file(0)
+    except:
+        get_file_error = True
 
     if platform.system() == 'Darwin':
-        image_path = os.path.join(os.path.expanduser('~/Desktop/') + image_name)
-        download_file(image_path, image_data)
+        try:
+            if get_file_error:
+                raise FileNotFoundError  # couldn't find the file online
 
-        #changes the background
-        cmd = """osascript -e 'tell application "Finder" to set desktop picture to POSIX file""" + '"' + image_path + """"'"""
-        os.system(cmd)
+            image_path = os.path.join(os.path.expanduser('~/Desktop/') + image_name)
+            download_file(image_path, image_data)
+
+            #changes the background
+            cmd = """osascript -e 'tell application "Finder" to set desktop picture to POSIX file""" + '"' + image_path + """"'"""
+            os.system(cmd)
+        except:  # use default background
+            image_path = "/Users/shimismith/PycharmProjects/DBC/default.png"
+            cmd = """osascript -e 'tell application "Finder" to set desktop picture to POSIX file""" + '"' + image_path + """"'"""
+            os.system(cmd)
+
     elif platform.system() == 'Linux':
         print("Sorry we don't do those (for now)")
     elif platform.system() == 'Windows':
@@ -103,4 +117,3 @@ def change_background():
 
 if __name__ == '__main__':
     change_background()
-
